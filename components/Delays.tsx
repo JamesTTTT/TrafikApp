@@ -19,12 +19,13 @@ export default function DelayList() {
         fetch(`${config.base_url}/stations`)
         .then(response => response.json())
         .then(result => setStations(result.data));
-        console.log(stationList)
     }, []);
 
-    const listOfDealys = delayList.map((item, index) =>{
-        let nameOfStation = stationList.filter(
-            station => station.LocationSignature === item.FromLocation[0].LocationName)
+    const listOfDealys = delayList
+    .filter(delay => delay.hasOwnProperty("FromLocation"))
+    .map((item, index) => {
+        let nameOfStation = stationList.filter(station => station.LocationSignature == item.FromLocation[0].LocationName)
+        console.log(nameOfStation)
         return <Text key={index} style={Display.box}>
             Station: {nameOfStation[0].AdvertisedLocationName}{"\n"}
             Activity Type: {item.ActivityType}{"\n"}
