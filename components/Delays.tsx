@@ -1,13 +1,41 @@
 import { useEffect,useState } from "react";
 import { View, Text, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
+import { TextInput,ScrollView,Keyboard } from "react-native";
 import config from "./../config/config.json";
-import { Base, Display } from "../styles";
-import stationModel from "../models/station";
+import { Base, Display, Input } from "../styles";
+import { input } from "../styles/input";
+
+function SearchBar({clicked, searchPhrase, setSearchPhrase, setClicked}) {
+    return(
+        <View style={Input.inputContainer}>
+            <TextInput
+                placeholder="Search"
+                value={searchPhrase}
+                onChange={setSearchPhrase}
+                onFocus={()=> {
+                    setClicked(true);
+                }}
+                style={Input.input}
+            />
+        {clicked && (
+        <View>
+          <Button
+            title="Cancel"
+            onPress={() => {
+              Keyboard.dismiss();
+              setClicked(false);
+            }}>
+          </Button>
+        </View>
+      )}
+        </View>
+
+    )
+}
 
 
-export default function DelayList() {
+function DelayList({ searchPhrase }) {
 
     const [delayList, setDelayList] = useState([]);
     const [stationList, setStations] = useState([]);
@@ -19,13 +47,13 @@ export default function DelayList() {
         fetch(`${config.base_url}/stations`)
         .then(response => response.json())
         .then(result => setStations(result.data));
+        
     }, []);
 
-    const listOfDealys = delayList
+    const listOfDelays = delayList
     .filter(delay => delay.hasOwnProperty("FromLocation"))
     .map((item, index) => {
         let nameOfStation = stationList.filter(station => station.LocationSignature == item.FromLocation[0].LocationName)
-        console.log(nameOfStation)
         return <Text key={index} style={Display.box}>
             Station: {nameOfStation[0].AdvertisedLocationName}{"\n"}
             Activity Type: {item.ActivityType}{"\n"}
@@ -35,13 +63,36 @@ export default function DelayList() {
     });
 
     return (
-        <SafeAreaView style={Base.container}> 
         <View>
+            {/* <SearchBar
+              searchPhrase={searchPhrase}
+              setSearchPhrase={setSearchPhrase}
+              clicked={clicked}
+              setClicked={setClicked}
+            /> */}
             <ScrollView>
             <Text>Current Delays</Text>
-            {listOfDealys}
+            {listOfDelays}
             </ScrollView>
         </View>
-        </SafeAreaView>
     );
+}
+
+export default function DelayListPage() {
+    const [searchPhrase, setSearchPhrase] = useState("");
+    const [clicked, setClicked] = useState(false);
+
+    return (
+        <SafeAreaView style={Base.container}>
+        <View>
+            <SearchBar
+              searchPhrase={searchPhrase}
+              setSearchPhrase={setSearchPhrase}
+              clicked={clicked}
+              setClicked={setClicked}
+            />
+        <DelayList searchPhrase={searchPhrase}/>
+        </View>
+        </SafeAreaView>
+    )
 }
