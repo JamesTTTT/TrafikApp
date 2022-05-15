@@ -2,9 +2,9 @@ export const input = {
     fontSize: 20,
     marginLeft: 10,
     width: "90%",
-},
+}
 
-inputContainer = {
+export const inputContainer = {
     margin: 15,
     justifyContent: "flex-start",
     alignItems: "center",

@@ -9,7 +9,7 @@ export default function Delay() {
     return(
         <Stack.Navigator>
             <Stack.Screen name="List" component={DelayListPage}/>
-            <Stack.Screen name="Delay" component={DelayDetails}/>
+            <Stack.Screen name="Details" component={DelayDetails}/>
         </Stack.Navigator>
     )
 }
