@@ -31,4 +31,17 @@ export const label = {
 export const center = {
     textAlign: "center",
     fontSize: 25,
+    padding: 10,
+}
+
+export const centerXL = {
+    textAlign: "center",
+    fontSize: 30,
+    padding: 15,
+}
+
+export const centerS = {
+    textAlign: "center",
+    fontSize: 15,
+    padding: 5,
 }

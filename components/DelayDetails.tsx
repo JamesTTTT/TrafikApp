@@ -1,5 +1,5 @@
 import { useEffect,useState } from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Marker } from "react-native-maps";
@@ -11,9 +11,9 @@ import config from "./../config/config.json";
 import { Base, Display, typography } from "../styles";
 import station from "../models/station";
 import getCoordinates from "../models/cordinates";
-import { StyleSheet } from "react-native";
 import Stations from "../interfaces/station";
 import stationModel from "../models/station";
+import { header2 } from "../styles/typography";
 
 
 export default function DelayDetails({route}){
@@ -26,7 +26,7 @@ export default function DelayDetails({route}){
     const [myLocation, setMyLocation] = useState([])
     useEffect(() => {
         (async () => {
-            const results = await getCoordinates(`${curStn[0].AdvertisedLocationName}`);
+            const results = await getCoordinates(`${curStn[0].Geometry.WGS84}`);
             setMarker(<Marker
                 coordinate={{ latitude: parseFloat(results[0].lat), longitude: parseFloat(results[0].lon) }}
                 title={results[0].display_name}
@@ -64,7 +64,8 @@ export default function DelayDetails({route}){
 
     return(
         <View style={Base.base}>
-            <Text>Station: {curStn[0].AdvertisedLocationName}</Text>
+            <Text style={typography.centerXL}>{curStn[0].AdvertisedLocationName}</Text>
+            <Text style={typography.centerS}>{curStn[0].AdvertisedLocationName}</Text>
         <View style={styles.container}>
             <MapView
                     style={styles.map}

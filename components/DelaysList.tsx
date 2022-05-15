@@ -63,6 +63,7 @@ function DelayList({navigation, route, searchPhrase }) {
         let diff = diff_minutes(Est,Adv) ;
         
         let nameOfStation = stationList.filter(station => station.LocationSignature == item.FromLocation[0].LocationName)
+        let nameOfDestination = stationList.filter(station => station.LocationSignature == item.ToLocation[0].LocationName)
         return <Text
                 key={index}
                 style={Display.box}
@@ -73,7 +74,7 @@ function DelayList({navigation, route, searchPhrase }) {
                 }}>
                      
             Station: {nameOfStation[0].AdvertisedLocationName}{"\n"}
-            {/* Activity Type: {item.ActivityType}{"\n"} */}
+            Destination: {nameOfDestination[0].AdvertisedLocationName}{"\n"}
             Original Arrival: {Adv.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}{"\n"}
             Estimated Arrival: {Est.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}{"\n"}
             Current Delay: {diff} minutes

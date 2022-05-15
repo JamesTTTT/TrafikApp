@@ -5,8 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import DelayListPage from './components/DelaysList';
 import Delay from './components/Delay';
+import DelayMap from './components/Maps';
 
 import { Base } from './styles';
 
@@ -33,9 +33,9 @@ export default function App() {
         <Tab.Screen name ="Delays">
           {() => <Delay/>}
         </Tab.Screen>
-        {/* <Tab.Screen name ="DelayMap">
+        <Tab.Screen name ="DelayMap">
           {() => <DelayMap/>}
-        </Tab.Screen> */}
+        </Tab.Screen>
       </Tab.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
