@@ -26,12 +26,19 @@ export const altnormal = {
 
 export const label = {
     fontSize: 25,
+    marginLeft: 10,
 }
 
 export const center = {
     textAlign: "center",
     fontSize: 25,
     padding: 10,
+}
+
+export const centerBold = {
+    textAlign: "center",
+    fontWeight: 'bold',
+    fontSize: 20,
 }
 
 export const centerXL = {
@@ -44,4 +51,24 @@ export const centerS = {
     textAlign: "center",
     fontSize: 15,
     padding: 5,
+}
+
+export const stationName = {
+    fontSize: 23,
+    fontWeight: 'bold',
+}
+
+export const oldTime = {
+    textDecorationLine: 'line-through',
+    fontSize:17,
+}
+
+export const newTime = {
+    fontSize:20,
+    backgroundColor:'yellow',
+    alignSelf:'flex-start',
+}
+
+export const delayTime = {
+    fontSize:17,
 }

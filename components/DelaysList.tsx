@@ -1,11 +1,10 @@
-import { useEffect,useState } from "react";
-import { View, Text, Button } from "react-native";
+import { useCallback,useEffect,useState } from "react";
+import { RefreshControl, View, Text, Button,TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput,ScrollView,Keyboard } from "react-native";
 import config from "../config/config.json";
 
 import { Base, Display, Input, typography } from "../styles";
-import { header1 } from "../styles/typography";
 
 import stationModel from "../models/station";
 import delaysModel from "../models/delays";
@@ -41,8 +40,20 @@ function SearchBar({clicked, searchPhrase, setSearchPhrase, setClicked}) {
     )
 }
 
-function DelayList({navigation, route, searchPhrase }) {
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
+function DelayList({navigation, route, searchPhrase }) {
+    
+    const onRefresh = useCallback(async() => {
+      setRefreshing(true);
+      setStations(await stationModel.getStations());
+      setDelayList(await delaysModel.getDelays());
+      wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+    const [refreshing, setRefreshing] = useState(false);
     const [delayList, setDelayList] = useState<Delays[]>([]);
     const [stationList, setStations] = useState<Stations[]>([]);
     const [isLoading, setLoading] = useState(true);
@@ -60,11 +71,11 @@ function DelayList({navigation, route, searchPhrase }) {
     .map((item, index) => {
         let Est = new Date(item.EstimatedTimeAtLocation)
         let Adv = new Date(item.AdvertisedTimeAtLocation)
-        let diff = diff_minutes(Est,Adv) ;
+        let diff = delaysModel.timeDifference(Est,Adv) ;
         
         let nameOfStation = stationList.filter(station => station.LocationSignature == item.FromLocation[0].LocationName)
         let nameOfDestination = stationList.filter(station => station.LocationSignature == item.ToLocation[0].LocationName)
-        return <Text
+        return <TouchableOpacity
                 key={index}
                 style={Display.box}
                 onPress={() => {
@@ -73,13 +84,14 @@ function DelayList({navigation, route, searchPhrase }) {
                     });
                 }}>
                      
-            Station: {nameOfStation[0].AdvertisedLocationName}{"\n"}
-            Destination: {nameOfDestination[0].AdvertisedLocationName}{"\n"}
-            Original Arrival: {Adv.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}{"\n"}
-            Estimated Arrival: {Est.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}{"\n"}
-            Current Delay: {diff} minutes
+            <Text style={typography.stationName}>{nameOfStation[0].AdvertisedLocationName} - {nameOfDestination[0].AdvertisedLocationName}</Text>
+            <Text style={typography.newTime}>{Est.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
+            <Text style={typography.oldTime}>{Adv.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
+            <View style={Display.delayTimebox}>
+                <Text style={typography.delayTime}>{diff} minutes</Text>
+            </View>
 
-        </Text>
+            </TouchableOpacity>
     });
 
     if (isLoading) return (<View>
@@ -88,8 +100,14 @@ function DelayList({navigation, route, searchPhrase }) {
 
     return (
         <View>
-            <ScrollView>
-            <Text style={typography.center}>Current Delays</Text>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }>
+            <Text style={typography.label}>Current Delays</Text>
             {listOfDelays}
             </ScrollView>
         </View>
@@ -115,11 +133,3 @@ export default function DelayListPage({navigation}) {
     )
 }
 
-function diff_minutes(dt2, dt1) 
- {
-
-  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= 60;
-  return Math.abs(Math.round(diff));
-  
- }

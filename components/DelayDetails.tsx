@@ -20,19 +20,22 @@ export default function DelayDetails({route}){
     const { delay, station } = route.params;
     const [marker, setMarker] = useState(null);
     const [isLoading, setLoading] = useState(true);
-    const [curStn, setCurStn] = useState<Stations>([])
+    const [curStn, setCurStn] = useState<Stations[]>([])
+    const [desStn, setDesStn] = useState<Stations[]>([])
     const [errorMessage, setErrorMessage] = useState(null);
     const [locationMarker, setLocationMarker] = useState(null);
     const [myLocation, setMyLocation] = useState([])
+
     useEffect(() => {
         (async () => {
-            const results = await getCoordinates(`${curStn[0].Geometry.WGS84}`);
+            setCurStn(await stationModel.getStationByAcr(delay.FromLocation[0].LocationName))
+            setDesStn(await stationModel.getStationByAcr(delay.ToLocation[0].LocationName))
+            const results = getCoordinates(curStn[0].Geometry.WGS84);
             setMarker(<Marker
-                coordinate={{ latitude: parseFloat(results[0].lat), longitude: parseFloat(results[0].lon) }}
-                title={results[0].display_name}
+                coordinate={{ latitude: parseFloat(results.lat), longitude: parseFloat(results.lon) }}
             />);
         })();
-    }, []);
+    }, [])
 
     useEffect(() => {
         (async () => {
@@ -52,9 +55,7 @@ export default function DelayDetails({route}){
                 title="Min Plats"
                 pinColor="blue"
                 />);
-            setCurStn(await stationModel.getStationByAcr(delay.FromLocation[0].LocationName))
-            setLoading(false)
-
+            setLoading(false);
         })();
     }, [])
   
@@ -64,8 +65,11 @@ export default function DelayDetails({route}){
 
     return(
         <View style={Base.base}>
-            <Text style={typography.centerXL}>{curStn[0].AdvertisedLocationName}</Text>
-            <Text style={typography.centerS}>{curStn[0].AdvertisedLocationName}</Text>
+            <Text style={typography.centerBold}>{curStn[0].AdvertisedLocationName} - {desStn[0].AdvertisedLocationName}</Text>
+            <Text style={typography.centerS}> Original Arrival: {new Date(delay.AdvertisedTimeAtLocation)
+            .toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
+            <Text style={typography.centerS}> Estimated Arrival: {new Date(delay.EstimatedTimeAtLocation)
+            .toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
         <View style={styles.container}>
             <MapView
                     style={styles.map}
@@ -87,6 +91,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-end",
         alignItems: "center",
+        zIndex: -1, 
+        borderRadius: 10, 
+        borderWidth: 1, 
+        overflow: 'hidden',
+        marginBottom: 20,
     },
     map: {
         ...StyleSheet.absoluteFillObject,

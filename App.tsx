@@ -1,6 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native';
+import { RefreshControl, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,10 +12,11 @@ import { Base } from './styles';
 const Tab = createBottomTabNavigator();
 const routeIcons = {
   "Delays": "ios-time-outline",
-  "DelayMap": "map",
+  "Map": "map",
 };
 
 export default function App() {
+  
   return (
     <SafeAreaView style={Base.container}>
     <NavigationContainer>
@@ -26,14 +26,14 @@ export default function App() {
           
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#3C6478',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'light-gray',
       })}
       >
         <Tab.Screen name ="Delays">
           {() => <Delay/>}
         </Tab.Screen>
-        <Tab.Screen name ="DelayMap">
+        <Tab.Screen name ="Map">
           {() => <DelayMap/>}
         </Tab.Screen>
       </Tab.Navigator>

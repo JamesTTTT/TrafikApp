@@ -14,7 +14,7 @@ const station = {
         let res = result.filter(function(item){
             return item.LocationSignature == acronym;
          })
-         return res
+        return res
     }
 }
 
