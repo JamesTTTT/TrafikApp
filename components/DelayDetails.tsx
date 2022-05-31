@@ -30,7 +30,7 @@ export default function DelayDetails({route}){
         (async () => {
             setCurStn(await stationModel.getStationByAcr(delay.FromLocation[0].LocationName))
             setDesStn(await stationModel.getStationByAcr(delay.ToLocation[0].LocationName))
-            const results = getCoordinates(curStn[0].Geometry.WGS84);
+            const results = await getCoordinates(curStn[0].Geometry.WGS84);
             setMarker(<Marker
                 coordinate={{ latitude: parseFloat(results.lat), longitude: parseFloat(results.lon) }}
             />);
