@@ -17,7 +17,8 @@ const Tab = createBottomTabNavigator();
 const routeIcons = {
   "Delays": "ios-time-outline",
   "Map": "map",
-  "Logga in": "key"
+  "Logga in": "key",
+  "Favorites": "heart"
 };
 
 export default function App() {
@@ -37,7 +38,7 @@ export default function App() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'light-gray',
+        tabBarInactiveTintColor: 'lightgray',
       })}
       >
         <Tab.Screen name ="Delays">
