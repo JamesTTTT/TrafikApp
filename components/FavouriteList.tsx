@@ -26,9 +26,18 @@ export default function FavouriteList({ route, navigation}) {
 
       })
 
+      const checkStationList = ()=>{
+          if (StationList.length<1){
+              return(<Text style={typography.centerXL}>Your Favourites is empty!</Text>)
+          }
+          else {
+              return StationList
+          }
+      }
+
     return(
         <ScrollView>
-            {StationList}
+            {checkStationList()}
         </ScrollView>
     )
 }

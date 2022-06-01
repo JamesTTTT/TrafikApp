@@ -1,5 +1,5 @@
 import { View, ScrollView, Text,TouchableOpacity,Button } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import stationModel from "../models/station";
 import favModel from "../models/favourite";
 import storage from "../models/storage";
@@ -8,55 +8,69 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function StationList({ route, navigation, setIsLoggedIn }) {
   const [stationList, setStations] = useState<Stations[]>([]);
-  const [likedStations, setLikedStations] = useState([])
-  //const [isLiked, setLiked] = useState(false);
+  const [likedStations, setLikedStations] = useState([]);
+  const [ignored, forceUpdate] = useReducer(x=> x+1,0);
+  const { reload } = route.params || true;
+
+  if(reload) {
+    setFavourites();
+    route.params = false;
+}
 
   async function logOut() {
     storage.deleteToken();
     setIsLoggedIn(false);
   }
 
+  async function setFavourites() {
+    const favArr = await favModel.getLiked();
+    const favNames = favArr.map((object: object)=> object.artefact)
+    setLikedStations(favNames)
+  }
+
   useEffect(()=>{
     (async()=>{
         setStations(await stationModel.getStations());
-        //await getFavs();
+        setFavourites()
+        navigation.addListener('focus', ()=>setFavourites());
     })();
   }, []);
 
   const checkStation = (curStation:string)=>{
-    for(let station of likedStations){
-      if(station === curStation){
-        return true
-      }
-    }
-    return false
-  }
+   for(let station of likedStations){
+     if(station == curStation){
+       return true
+     }
+   }
+   return false;
+   }
 
   const addFavourite = async(stationName:string)=>{
     await favModel.createLikedStation(stationName);
-    console.log("added")
   }
 
-  // const getFavs = async() =>{
-  //   const likedArr = await favModel.getLiked()
-  //   for(let i = 0; i<likedArr.lenght;i++){
-  //     setLikedStations((likedStations) => [...likedStations, likedArr[i]])
+  const deleteFavourite = async (stationId: number) => {
+    await favModel.deleteLiked(stationId)
+    console.log("deleted")
+  }
 
-  //   }
-  // }
+  const getId =async (name: string) => {
+    const favArr = await favModel.getLiked();
+    const favObj = favArr.filter((object: object)=> {return object.artefact === name})
+    return favObj[0].id
+  }
 
-  // const toggleStations = async(curStation:object)=>{
-  //   if(checkStation(curStation)){
-  //     // setLikedStations(likedStations.filter((station)=>{
-  //     //   return station !== curStation
-  //     // }))
-  //     console.log("here")
-  //   } else {
-      
-  //     console.log("nothing")
-  //     // setLikedStations((likedStations) => [...likedStations, curStation])
-  //   }
-  // }
+  const toggleStations = async(name:string)=>{
+    if(checkStation(name)){
+      const id = await getId(name);
+      deleteFavourite(id)
+      console.log("Deleted")
+    } else {
+      addFavourite(name)
+      console.log("Added")
+    }
+    setFavourites()
+  }
 
   const listOfStations = stationList.map((item, index) => {
   return (
@@ -64,8 +78,9 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
     <TouchableOpacity
     key={index}
     style={Display.box}
-    onPress={() => {
-      addFavourite(item.AdvertisedLocationName)
+    onPress={async () => {
+      toggleStations(item.AdvertisedLocationName);
+      await setFavourites();
     }}>
       <Text style={typography.stationName}>{item.AdvertisedLocationName}</Text>
       {checkStation(item.AdvertisedLocationName) ?
@@ -86,6 +101,7 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
             title ="Logga ut"
             onPress={async ()=> {
                 await logOut()
+                navigation.navigate('Logga in')
             }}
             />
       {listOfStations}

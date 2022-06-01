@@ -39,8 +39,6 @@ const fav = {
             })
         },
 
-    }
-
     getLiked: async function getLiked() {
         const tokenObject: any = await storage.readToken();
         const response = await fetch(`${config.auth_url}/data?api_key=${config.auth_api_key}`,{
