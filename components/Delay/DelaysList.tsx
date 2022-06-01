@@ -2,14 +2,13 @@ import { useCallback,useEffect,useState } from "react";
 import { RefreshControl, View, Text, Button,TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput,ScrollView,Keyboard } from "react-native";
-import config from "../config/config.json";
 
-import { Base, Display, Input, typography } from "../styles";
+import { Base, Display, Input, typography } from "../../styles";
 
-import stationModel from "../models/station";
-import delaysModel from "../models/delays";
+import stationModel from "../../models/station";
+import delaysModel from "../../models/delays";
 
-import Delays from "../interfaces/delay";
+import Delays from "../../interfaces/delay";
 import Stations from "../interfaces/station";
 
 function SearchBar({clicked, searchPhrase, setSearchPhrase, setClicked}) {
@@ -99,18 +98,16 @@ function DelayList({navigation, route, searchPhrase }) {
     </View>)
 
     return (
-        <View>
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                      refreshing={refreshing}
-                      onRefresh={onRefresh}
-                    />
-                  }>
-            <Text style={typography.label}>Current Delays</Text>
-            {listOfDelays}
-            </ScrollView>
-        </View>
+        <ScrollView
+            refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }>
+        <Text style={typography.label}>Current Delays</Text>
+        {listOfDelays}
+        </ScrollView>
     );
 }
 

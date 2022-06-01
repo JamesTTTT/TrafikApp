@@ -5,10 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import Delay from './components/Delay';
+import Delay from './components/Delay/Delay';
 import DelayMap from './components/Maps';
 import Auth from './components/Auth/Auth';
-import Favourite from './components/Favourite';
+import Favourite from './components/Favourite/Favourite';
 import authModel from './models/auth';
 
 import { Base } from './styles';

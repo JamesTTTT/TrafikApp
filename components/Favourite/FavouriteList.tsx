@@ -1,7 +1,9 @@
-import { View , ScrollView, Text} from "react-native"
+import { View , ScrollView, Text, Button, Pressable,TouchableOpacity} from "react-native"
 import { useEffect, useState } from "react"
-import { Display,typography } from "../styles";
-import favModel from "../models/favourite";
+import { Display,typography, Buttons } from "../../styles";
+import favModel from "../../models/favourite";
+import stationModel from "../../models/station";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function FavouriteList({ route, navigation}) {
 
@@ -11,17 +13,24 @@ export default function FavouriteList({ route, navigation}) {
     useEffect(()=>{
         (async()=>{
             setLikedStations(await favModel.getLiked());
-
         })();
       }, []);
 
 
       const StationList = likedStations.map((item, index) =>{
           return(
-            <View key={index}
-            style={Display.box}>
+            <TouchableOpacity key={index}
+            style={Display.box}
+            onPress={()=>{
+                navigation.navigate('Details', {
+                    station: item,
+                });
+            }}>
+                <View style={Display.spacebox}>
                 <Text style={typography.stationName}>{item.artefact}</Text>
-            </View>
+                <Ionicons name={"arrow-redo-sharp"} size={35}/>
+                </View>
+            </TouchableOpacity>
           )
 
       })
@@ -37,7 +46,10 @@ export default function FavouriteList({ route, navigation}) {
 
     return(
         <ScrollView>
+            <Text style={typography.label}>View delays for:</Text>
             {checkStationList()}
+
+
         </ScrollView>
     )
 }

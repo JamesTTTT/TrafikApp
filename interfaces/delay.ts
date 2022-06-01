@@ -1,7 +1,7 @@
 export default interface Delays {
-    ActivityId: String,
-    ActivityType: String,
-    AdvertisedTimeAtLocation: String,
+    ActivityId: string,
+    ActivityType: string,
+    AdvertisedTimeAtLocation: string,
     AdvertisedTrainIdent: string,
     Canceled: boolean,
     EstimatedTimeAtLocation: string,

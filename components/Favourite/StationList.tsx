@@ -1,10 +1,11 @@
-import { View, ScrollView, Text,TouchableOpacity,Button } from "react-native";
+import { View, ScrollView, Text,TouchableOpacity,Button, Pressable } from "react-native";
 import { useState, useEffect, useReducer } from "react";
-import stationModel from "../models/station";
-import favModel from "../models/favourite";
-import storage from "../models/storage";
-import { Display,typography } from "../styles";
+import stationModel from "../../models/station";
+import favModel from "../../models/favourite";
+import storage from "../../models/storage";
+import { Buttons, Display,typography } from "../../styles";
 import { Ionicons } from '@expo/vector-icons';
+import { button } from "../../styles/buttons";
 
 export default function StationList({ route, navigation, setIsLoggedIn }) {
   const [stationList, setStations] = useState<Stations[]>([]);
@@ -16,6 +17,8 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
     setFavourites();
     route.params = false;
 }
+
+  let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   async function logOut() {
     storage.deleteToken();
@@ -51,7 +54,6 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
 
   const deleteFavourite = async (stationId: number) => {
     await favModel.deleteLiked(stationId)
-    console.log("deleted")
   }
 
   const getId =async (name: string) => {
@@ -69,7 +71,6 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
       addFavourite(name)
       console.log("Added")
     }
-    setFavourites()
   }
 
   const listOfStations = stationList.map((item, index) => {
@@ -80,14 +81,17 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
     style={Display.box}
     onPress={async () => {
       toggleStations(item.AdvertisedLocationName);
-      await setFavourites();
+      await sleep(1000);
+      setFavourites();
     }}>
+      <View style={Display.spacebox}>
       <Text style={typography.stationName}>{item.AdvertisedLocationName}</Text>
       {checkStation(item.AdvertisedLocationName) ?
         <Ionicons name={"heart"} size={30} color={"red"} /> :
         <Ionicons name={"heart-outline"} size={30} color={"black"} />
 
       }
+      </View>
     </TouchableOpacity>)
   })
 
@@ -95,15 +99,23 @@ export default function StationList({ route, navigation, setIsLoggedIn }) {
   return (
 
     <ScrollView>
-      <Button title="View Favourites"
-        onPress={()=> navigation.navigate('Favourites')}/>
-      <Button
-            title ="Logga ut"
-            onPress={async ()=> {
-                await logOut()
-                navigation.navigate('Logga in')
-            }}
-            />
+      <View style={Display.spacebox2}>
+      <Pressable 
+      style={Buttons.button} 
+      onPress={()=> navigation.navigate('Favourites')}>
+        <Text style={Buttons.buttonText}>View Favourites</Text>
+      </Pressable>
+      <Pressable
+        style={Buttons.button}
+        onPress={async ()=> {
+            await logOut()
+            navigation.navigate('Login')
+        }}
+        >
+        <Text style={Buttons.buttonText}>Logout</Text>
+      </Pressable>
+      </View>
+      <Text style={typography.label}>All Stations:</Text>
       {listOfStations}
     </ScrollView>
   )

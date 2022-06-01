@@ -6,33 +6,36 @@ import { Marker } from "react-native-maps";
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
-import { ScrollView } from "react-native";
-import config from "./../config/config.json";
-import { Base, Display, typography } from "../styles";
-import station from "../models/station";
-import getCoordinates from "../models/cordinates";
-import Stations from "../interfaces/station";
-import stationModel from "../models/station";
-import { header2 } from "../styles/typography";
+import { Base, Display, typography } from "../../styles";
+import station from "../../models/station";
+import getCoordinates from "../../models/cordinates";
+import Stations from "../../interfaces/station";
+import stationModel from "../../models/station";
 
 
 export default function DelayDetails({route}){
     const { delay, station } = route.params;
     const [marker, setMarker] = useState(null);
     const [isLoading, setLoading] = useState(true);
+    const [isLoadingStation, setLoadingStation] = useState(true);
     const [curStn, setCurStn] = useState<Stations[]>([])
     const [desStn, setDesStn] = useState<Stations[]>([])
     const [errorMessage, setErrorMessage] = useState(null);
     const [locationMarker, setLocationMarker] = useState(null);
     const [myLocation, setMyLocation] = useState([])
 
+
+    let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     useEffect(() => {
         (async () => {
             setCurStn(await stationModel.getStationByAcr(delay.FromLocation[0].LocationName))
             setDesStn(await stationModel.getStationByAcr(delay.ToLocation[0].LocationName))
-            const results = await getCoordinates(curStn[0].Geometry.WGS84);
+            setLoadingStation(false)
+            const results = getCoordinates(curStn[0].Geometry.WGS84);
             setMarker(<Marker
                 coordinate={{ latitude: parseFloat(results.lat), longitude: parseFloat(results.lon) }}
+                title={curStn[0].AdvertisedLocationName}
             />);
         })();
     }, [])
@@ -55,7 +58,9 @@ export default function DelayDetails({route}){
                 title="Min Plats"
                 pinColor="blue"
                 />);
+
             setLoading(false);
+
         })();
     }, [])
   
@@ -79,7 +84,7 @@ export default function DelayDetails({route}){
                         latitudeDelta: 0.5,
                         longitudeDelta: 0.5
                     }}>
-                {marker}
+                {isLoadingStation? null: marker}
                 {locationMarker}
             </MapView>
         </View>

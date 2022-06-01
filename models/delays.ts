@@ -11,7 +11,18 @@ const delays = {
         let diff =(dt2.getTime() - dt1.getTime()) / 1000;
         diff /= 60;
         return Math.abs(Math.round(diff));
-    }
+    },
+
+    // getDelaybyStation: async function getDelaybyStation(stationArc:string){
+    //     const result = await this.getDelays()
+
+    //     let res = result.filter(function(delay){
+    //         return delay.FromLocation.LocationName == stationArc;
+    //      })
+    //     console.log(res)
+    //     console.log("done")
+    //     return res
+    // }
 }
 
 export default delays

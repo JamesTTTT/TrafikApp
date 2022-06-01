@@ -22,3 +22,15 @@ export const delayTimebox = {
     flexDirection: 'row',
     justifyContent: 'flex-end'
 }
+
+export const spacebox = {
+    flex: 1, 
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+}
+
+export const spacebox2 = {
+    flex: 1, 
+    flexDirection: 'row',
+    justifyContent: 'space-around'
+}

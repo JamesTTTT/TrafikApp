@@ -14,6 +14,15 @@ const station = {
             return item.LocationSignature == acronym;
          })
         return res
+    },
+
+    getStationByName: async function getStationByName(name: string) {
+        const result = await this.getStations()
+
+        let res = result.filter(function(item){
+            return item.AdvertisedLocationName == name;
+         })
+        return res[0]
     }
 }
 
