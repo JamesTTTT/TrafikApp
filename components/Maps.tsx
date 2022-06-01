@@ -1,7 +1,7 @@
 import { View,StyleSheet,Text } from "react-native"
 import { useEffect,useState } from "react";
 
-import { Marker } from "react-native-maps";
+import { Callout, Circle, Marker } from "react-native-maps";
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
@@ -13,6 +13,7 @@ import Delays from "../interfaces/delay";
 import Stations from "../interfaces/station";
 
 import { typography } from "../styles";
+
 
 export default function DelayMap(){
 
@@ -56,17 +57,37 @@ export default function DelayMap(){
         let Est = new Date(item.EstimatedTimeAtLocation)
         let Adv = new Date(item.AdvertisedTimeAtLocation)
         let diff = delaysModel.timeDifference(Est,Adv) ;
-        return(
+        let radius = (diff * 100)/2;
+        return(<>
             <Marker
+            style={styles.marker}
+            key={index}
             coordinate={{
                 latitude: parseFloat(stationLocation.lat),
                 longitude: parseFloat(stationLocation.lon)
             }}
-            description={`Delay: ${diff} Minutes`}
+            //description={`Delay: ${diff} Minutes`}
             title = {currentStation[0].AdvertisedLocationName}
             pinColor="red"
             key={index}
-            />
+            >
+                <Callout>
+                    <View>
+                        <Text>{currentStation[0].AdvertisedLocationName}</Text>
+                        <Text>New Time: {Est.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
+                        <Text>Original Time: {Adv.toLocaleString("se-SV",{hour: '2-digit', minute:'2-digit'})}</Text>
+                        <Text>Delay: {diff} minutes</Text>
+                    </View>
+                </Callout>
+            </Marker>
+            <Circle
+                center={{
+                    latitude: parseFloat(stationLocation.lat),
+                    longitude: parseFloat(stationLocation.lon)
+                }}
+                radius={radius}
+                />
+            </>
         );
     });
 
@@ -93,4 +114,7 @@ const styles = StyleSheet.create({
     map: {
         ...StyleSheet.absoluteFillObject,
     },
+    marker: {
+        zIndex: 100,
+    }
 });

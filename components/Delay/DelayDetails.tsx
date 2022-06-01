@@ -2,19 +2,20 @@ import { useEffect,useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Marker } from "react-native-maps";
+import { Circle, Marker } from "react-native-maps";
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
 import { Base, Display, typography } from "../../styles";
-import station from "../../models/station";
+
+import delaysModel from "../../models/delays";
 import getCoordinates from "../../models/cordinates";
 import Stations from "../../interfaces/station";
 import stationModel from "../../models/station";
 
 
 export default function DelayDetails({route}){
-    const { delay, station } = route.params;
+    const { delay } = route.params;
     const [marker, setMarker] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [isLoadingStation, setLoadingStation] = useState(true);
@@ -25,18 +26,29 @@ export default function DelayDetails({route}){
     const [myLocation, setMyLocation] = useState([])
 
 
-    let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
+    //let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
     useEffect(() => {
         (async () => {
             setCurStn(await stationModel.getStationByAcr(delay.FromLocation[0].LocationName))
             setDesStn(await stationModel.getStationByAcr(delay.ToLocation[0].LocationName))
-            setLoadingStation(false)
+            let Est = new Date(delay.EstimatedTimeAtLocation)
+            let Adv = new Date(delay.AdvertisedTimeAtLocation)
+            let diff = delaysModel.timeDifference(Est,Adv) ;
+            let radius = (diff * 100)/2;
             const results = getCoordinates(curStn[0].Geometry.WGS84);
-            setMarker(<Marker
+            setMarker(<><Marker
                 coordinate={{ latitude: parseFloat(results.lat), longitude: parseFloat(results.lon) }}
                 title={curStn[0].AdvertisedLocationName}
-            />);
+            />
+            <Circle
+                center={{
+                    latitude: parseFloat(results.lat),
+                    longitude: parseFloat(results.lon),
+                }}
+                radius={radius}
+                />
+            </>);
+            setLoadingStation(false)
         })();
     }, [])
 
@@ -50,7 +62,8 @@ export default function DelayDetails({route}){
 
             const currentLocation = await Location.getCurrentPositionAsync({});
             setMyLocation(currentLocation);
-            setLocationMarker(<Marker
+            setLocationMarker(
+                <Marker
                 coordinate={{
                     latitude: currentLocation.coords.latitude,
                     longitude: currentLocation.coords.longitude
@@ -64,7 +77,7 @@ export default function DelayDetails({route}){
         })();
     }, [])
   
-    if (isLoading) return (<View>
+    if (isLoading&&isLoadingStation) return (<View>
         <Text style={typography.center}>Loading...</Text>
     </View>)
 

@@ -48,8 +48,6 @@ export default function FavouriteList({ route, navigation}) {
         <ScrollView>
             <Text style={typography.label}>View delays for:</Text>
             {checkStationList()}
-
-
         </ScrollView>
     )
 }

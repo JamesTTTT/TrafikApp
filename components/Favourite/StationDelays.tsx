@@ -22,11 +22,6 @@ export default function StationDelay({route, navigation}){
         })();
     },[])
 
-    // const GetDelays = async() =>{
-    //     const delayInfo = await delaysModel.getDelaybyStation(stationDetails.LocationSignature)
-    //     console.log("happened")
-    //     return delayInfo;
-    // }
 
     const delaysForStation = stationDelays
     .filter(delay => delay.hasOwnProperty("FromLocation"))
@@ -48,6 +43,15 @@ export default function StationDelay({route, navigation}){
             </View>
     })
 
+    const checkStationList = ()=>{
+        if (delaysForStation.length<1){
+            return(<Text style={typography.normal}>There is currently no delays for this stations</Text>)
+        }
+        else {
+            return delaysForStation
+        }
+    }
+
     if(isLoading) return (<View>
         <Text style={typography.center}>Loading...</Text>
     </View>
@@ -55,7 +59,7 @@ export default function StationDelay({route, navigation}){
     return(
         <ScrollView>
             <Text style={typography.center}>Delays From {stationDetails.AdvertisedLocationName}</Text>
-            {delaysForStation}
+            {checkStationList()}
         </ScrollView>
     )
 }
